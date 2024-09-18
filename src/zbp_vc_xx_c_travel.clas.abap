@@ -1,0 +1,5 @@
+CLASS zbp_vc_xx_c_travel DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zvc_xx_c_travel.
+ENDCLASS.
+
+CLASS zbp_vc_xx_c_travel IMPLEMENTATION.
+ENDCLASS.

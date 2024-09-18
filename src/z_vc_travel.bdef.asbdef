@@ -1,0 +1,71 @@
+managed implementation in class zbp_vc_travel unique;
+strict ( 2 );
+with draft;
+
+define behavior for Z_VC_TRAVEL alias _Travel
+implementation in class zbp_vc_travel unique
+persistent table /dmo/travel_m
+draft table zvc_draft_travel
+lock master
+total etag LastChangedAt
+authorization master ( instance )
+etag master LastChangedAt
+{
+  create;
+  update;
+  delete;
+  field ( readonly ) TravelId;
+  association _Attachment { create; with draft; }
+
+  draft determine action Prepare;
+  draft action Activate;
+  draft action Edit;
+  draft action Resume;
+  draft action Discard;
+
+  mapping for /dmo/travel_m
+    {
+      TravelId      = Travel_Id;
+      AgencyId      = Agency_Id;
+      CustomerId    = customer_id;
+      BeginDate     = begin_date;
+      EndDate       = end_date;
+      BookingFee    = booking_fee;
+      TotalPrice    = Total_price;
+      CurrencyCode  = Currency_code;
+      Description   = description;
+      OverallStatus = overall_status;
+      CreatedBy     = created_by;
+      CreatedAt     = created_at;
+      LastChangedBy = last_changed_by;
+      LastChangedAt = last_changed_at;
+    }
+}
+
+define behavior for Z_VC_ATTACH alias _Attachment
+persistent table zvc_attach
+draft table zvc_draft_attach
+lock dependent by _Travel
+authorization dependent by _Travel
+etag master LastChangedAt
+{
+  update;
+  delete;
+  field ( readonly ) TravelId, Id;
+  association _Travel { with draft; }
+
+  mapping for zvc_attach
+    {
+      TravelId           = travel_id;
+      Id                 = id;
+      Attachment         = attachment;
+      Filename           = filename;
+      Filetype           = filetype;
+      Memo               = memo;
+      LastChangedAt      = last_changed_at;
+      LocalCreatedAt     = local_created_at;
+      LocalCreatedBy     = local_created_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LocalLastChangedBy = local_last_changed_by;
+    }
+}

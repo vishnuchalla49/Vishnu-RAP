@@ -1,0 +1,143 @@
+managed implementation in class zbp_vc_xx_travel unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZVC_XX_TRAVEL alias _Travel
+implementation in class zbp_vc_xx_travel unique
+persistent table /dmo/travel_m
+lock master
+total etag LastChangedAt
+authorization master ( instance )
+draft table zvc_draft_travel
+etag master LastChangedAt
+early numbering
+with additional save
+{
+  create;
+  update;
+  delete;
+  association _Booking { create ( features : instance ); with draft; }
+  association _Attachment { create ( features : instance ); with draft; }
+
+  validation validateTotalPrice on save { field TotalPrice; }
+  // field ( readonly : update ) TravelId, TotalPrice, CreatedBy, CreatedAt, LastChangedBy, LastChangedAt;
+  field ( mandatory ) AgencyId, CustomerId, BeginDate, EndDate, OverallStatus, BookingFee;
+
+  internal action reCalcTotalPrice;
+  determination calculateTotalPrice on modify { create; field BookingFee, CurrencyCode; }
+
+  draft determine action Prepare;
+  draft action Edit;
+  draft action Resume;
+  draft action Activate;
+  draft action Discard;
+
+  factory action copyTravel [1];
+
+  mapping for /dmo/travel_m
+    {
+      TravelId      = Travel_Id;
+      AgencyId      = Agency_Id;
+      CustomerId    = customer_id;
+      BeginDate     = begin_date;
+      EndDate       = end_date;
+      BookingFee    = booking_fee;
+      TotalPrice    = Total_price;
+      CurrencyCode  = Currency_code;
+      Description   = description;
+      OverallStatus = overall_status;
+      CreatedBy     = created_by;
+      CreatedAt     = created_at;
+      LastChangedBy = last_changed_by;
+      LastChangedAt = last_changed_at;
+    }
+}
+
+define behavior for ZVC_XX_BOOKING alias _Booking
+implementation in class zbp_vc_xx_booking unique
+persistent table /dmo/booking_m
+draft table zvc_draft_book
+lock dependent by _Travel
+authorization dependent by _Travel
+etag master LastChangedAt
+early numbering
+{
+  update;
+  delete;
+  field ( readonly : update ) TravelId, BookingId;
+  field ( mandatory ) CarrierId, ConnectionId, FlightDate, BookingStatus;
+
+  association _Travel { with draft; }
+  association _BookingSuppl { create; with draft; }
+  determination calculateTotalPrice on modify { create; field FlightPrice, CurrencyCode; }
+  mapping for /dmo/booking_m
+    {
+      TravelId      = Travel_Id;
+      BookingDate   = Booking_Date;
+      BookingId     = Booking_Id;
+      BookingStatus = Booking_Status;
+      CarrierId     = Carrier_Id;
+      ConnectionId  = Connection_Id;
+      CurrencyCode  = Currency_code;
+      CustomerId    = Customer_id;
+      FlightDate    = Flight_Date;
+      FlightPrice   = Flight_Price;
+      LastChangedAt = Last_Changed_At;
+    }
+}
+
+define behavior for ZVC_XX_BOOKSUPPL alias _BookingSuppl
+implementation in class zbp_vc_xx_booksuppl unique
+persistent table /dmo/booksuppl_m
+draft table zvc_d_buppl
+lock dependent by _Travel
+authorization dependent by _Travel
+etag master LastChangedAt
+early numbering
+{
+  update;
+  delete;
+  field ( readonly ) TravelId, BookingId, BookingSupplementId;
+  association _Travel { with draft; }
+  association _Booking { with draft; }
+
+  mapping for /dmo/booksuppl_m
+    {
+      TravelId            = Travel_Id;
+      BookingId           = Booking_Id;
+      BookingSupplementId = Booking_Supplement_id;
+      CurrencyCode        = Currency_code;
+      LastChangedAt       = Last_Changed_At;
+      Price               = Price;
+      SupplementId        = Supplement_Id;
+    }
+}
+
+define behavior for zvc_attachment_view alias _Attachment
+implementation in class zvc_xx_attach unique
+persistent table zvc_attachiu
+lock dependent by _Travel
+authorization dependent by _Travel
+draft table zvc_dt_attach
+etag master LastChangedAt
+{
+  update;
+  delete;
+  field ( readonly : update ) TravelId, Id;
+  association _Travel { with draft; }
+
+  mapping for zvc_attachiu
+    {
+      Attachment         = attachment;
+      Filename           = filename;
+      Filetype           = filetype;
+      Id                 = id;
+      LastChangedAt      = last_changed_at;
+      LocalCreatedAt     = local_created_at;
+      LocalCreatedBy     = local_created_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LocalLastChangedBy = local_last_changed_by;
+      Memo               = memo;
+      TravelId           = Travel_id;
+    }
+}

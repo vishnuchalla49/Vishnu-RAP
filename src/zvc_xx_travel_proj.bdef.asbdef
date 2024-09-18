@@ -1,0 +1,47 @@
+projection;
+strict ( 2 );
+use draft;
+
+define behavior for ZVC_XX_TRAVEL_PROJ alias _Travel
+implementation in class zbp_vc_xx_travel_proj unique
+{
+  use create;
+  use update;
+  use delete;
+
+  use action Activate;
+  use action Prepare;
+  use action edit;
+  use action discard;
+  use action resume;
+
+  use association _Booking { create; with draft; }
+  use association _Attachment { create; with draft; }
+}
+
+define behavior for zvc_xx_booking_proj alias _Booking
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft; }
+  use association _BookingSuppl { create; with draft; }
+}
+
+define behavior for ZVC_XX_BOOKSUPPL_PROJ alias _BookingSuppl
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft; }
+  use association _Booking { with draft; }
+}
+
+define behavior for ZVC_ATTACHMENT_VIEW_PROJ alias _Attachment
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft; }
+
+}

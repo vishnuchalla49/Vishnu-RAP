@@ -1,0 +1,13 @@
+@EndUserText.label: 'SERVIC'
+define service ZVC_NEWSERVIC {
+  expose ZVC_XX_TRAVEL_PROJ       as Travel;
+  expose zvc_xx_booking_proj      as Booking;
+  expose ZVC_XX_BOOKSUPPL_PROJ    as BookSuppl;
+  expose ZVC_ATTACHMENT_VIEW_PROJ as Attachment;
+  expose /DMO/I_Agency            as Agency;
+  expose /DMO/I_Customer          as Customer;
+  expose /DMO/I_Carrier           as Carrier;
+  expose /DMO/I_Connection        as Connection;
+  expose /DMO/I_Overall_Status_VH as OverallStatus;
+  expose /DMO/I_Booking_Status_VH as BookingStatus;
+}

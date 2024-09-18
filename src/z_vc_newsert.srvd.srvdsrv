@@ -1,0 +1,5 @@
+@EndUserText.label: 'SERT'
+define service Z_VC_NEWSERT {
+  expose Z_VC_TRAVEL_PROJ;
+  expose Z_VC_ATTACH_PROJ;
+}

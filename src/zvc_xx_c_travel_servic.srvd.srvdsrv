@@ -1,0 +1,9 @@
+@EndUserText.label: 'SERVIC'
+define service ZVC_XX_C_TRAVEL_SERVIC {
+  expose ZVC_XX_C_Travel         as Travel;
+  expose ZVC_XX_Agency           as Agency;
+  expose ZVC_XX_CUSTOMER         as Customer;
+  expose I_Country               as Country;
+  expose I_Currency              as Currency;
+  expose /DMO/I_Travel_Status_VH as TravelStatus;
+}

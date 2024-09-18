@@ -1,0 +1,26 @@
+projection;
+strict ( 2 );
+use draft;
+
+define behavior for Z_VC_TRAVEL_PROJ alias _Travel
+{
+  use create;
+  use update;
+  use delete;
+
+  use action Prepare;
+  use action Activate;
+  use action Edit;
+  use action Resume;
+  use action Discard;
+
+  use association _Attachment { create ; with draft; }
+}
+
+define behavior for Z_VC_ATTACH_PROJ alias _Attachment
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft; }
+}
